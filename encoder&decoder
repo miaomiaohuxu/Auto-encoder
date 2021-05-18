@@ -1,1 +1,31 @@
+# Extract encoder and decoder from saved auto-encoder
+import tensorflow as tf
+from tensorflow.keras import Input
+from tensorflow.keras.models import Model
+import matplotlib.pyplot as plt
 
+autoencoder = tf.keras.models.load_model('autoencoder.h5')
+autoencoder.summary()
+
+# encoder
+encoder = Model(autoencoder.input,autoencoder.layers[-3].output,name='encoder')
+
+# decoder
+decoder_input = Input(shape=(32,))
+decoder_output = autoencoder.layers[-2](decoder_input)
+decoder_output = autoencoder.layers[-1](decoder_output)
+decoder = Model(decoder_input,decoder_output,name='decoder')
+
+# test it
+mnist = tf.keras.datasets.mnist
+(train_images,train_labels),(test_images,test_labels) = mnist.load_data()
+test_images = test_images.reshape(10000,784)/255.
+
+encoded_images = encoder.predict(test_images)
+decoded_images = decoder.predict(encoded_images)
+
+decoded_images = decoded_images.reshape(10000,28,28)
+
+for i in range(3):
+  plt.imshow(decoded_images[i])
+  plt.show()
