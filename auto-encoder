@@ -1,10 +1,10 @@
-# create a auto-encoder
+# create an auto-encoder
 from tensorflow.keras import Input
 from tensorflow.keras import layers
 from tensorflow.keras.models import Model
 
 encoded_dim1 = 300
-encoded_dim2 = 150
+encoded_dim2 = 32
 mnist_input = Input(shape=(784,))
 mnist_hidden1 = layers.Dense(encoded_dim1,activation='relu')(mnist_input)
 mnist_hidden2 = layers.Dense(encoded_dim2,activation='relu')(mnist_hidden1)
