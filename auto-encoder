@@ -1,0 +1,27 @@
+# create a auto-encoder
+from tensorflow.keras import Input
+from tensorflow.keras import layers
+from tensorflow.keras.models import Model
+
+encoded_dim1 = 300
+encoded_dim2 = 150
+mnist_input = Input(shape=(784,))
+mnist_hidden1 = layers.Dense(encoded_dim1,activation='relu')(mnist_input)
+mnist_hidden2 = layers.Dense(encoded_dim2,activation='relu')(mnist_hidden1)
+mnist_hidden3 = layers.Dense(encoded_dim1,activation='relu')(mnist_hidden2)
+mnist_output = layers.Dense(784,activation='relu')(mnist_hidden3)
+
+model = Model(mnist_input,mnist_output)
+
+model.compile(optimizer='adam',
+              loss='mse',
+              metrics=['acc'])
+
+# training auto-encoder on MNIST data set
+mnist = tf.keras.datasets.mnist
+(train_images,train_labels),(test_images,test_labels) = mnist.load_data()
+test_images = test_images.reshape(10000,784)/255.
+
+model.fit(test_images,test_images,epochs=30,batch_size=512)
+
+model.save('autoencoder.h5')
